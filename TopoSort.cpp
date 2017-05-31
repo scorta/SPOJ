@@ -1,52 +1,46 @@
 #include <iostream>
 #include <vector>
-#include <deque>
-
-const int MAX_VERTEX = 10000;
-bool seen[MAX_VERTEX];
 
 std::vector<std::vector<int>> adj;
 std::vector<int> topo_order;
 std::vector<int> source_vertex;
 std::vector<int> degree;
-
+int n, m;
 
 void add_edge(int u, int v) {
 	adj[u].push_back(v);	
 }
 
-bool isFail(){
-	/*for(int i = 0; i < adj.size() - 1; i++){
-		if (adj[i].size() > 0){
-			return true;
-		}
-	}*/
+bool is_fail(){
+	if (topo_order.size() < n){
+		return true;
+	}
 
 	return false;
 }
 
 void print_result(){
-	if (isFail()){
+	if (is_fail()){
 		std::cout << "Sandro fails.";
 	}
 	else{
-		for (int i = 0; i < topo_order.size(); i++){
-			std::cout << ++topo_order[i];
+		for (int i = 0; i < topo_order.size() - 1; i++){
+			std::cout << ++topo_order[i]<< " ";
 		}
+		std::cout << ++topo_order[topo_order.size() - 1];
 	}
 }
 
-int main() {
-	int n, m;
+void init(){
 	std::cin >> n >> m;
 
 	for (int i = 0; i < n; i++){
 		std::vector<int> sub;
-		sub.push_back(0);
+		//sub.push_back(0);
 		adj.push_back(sub);
 
 		degree.push_back(0);
-		
+
 	}
 
 	for (int index = m - 1; index >= 0; index--){
@@ -61,7 +55,9 @@ int main() {
 			source_vertex.push_back(i);
 		}
 	}
+}
 
+void topo_sort(){
 	while (source_vertex.size() > 0){
 		int currentSourceNode = source_vertex[source_vertex.size() - 1];
 		topo_order.push_back(currentSourceNode);
@@ -69,13 +65,29 @@ int main() {
 
 		for (int i = adj[currentSourceNode].size() - 1; i >= 0; i--){
 			if (--degree[adj[currentSourceNode][i]] == 0){
-				source_vertex.push_back(adj[currentSourceNode][i]);
+
+				bool need_insertion = false;
+				for (int i_source_vertex = 0; i_source_vertex < source_vertex.size(); i_source_vertex++){ //Binary search is better?
+					if (source_vertex[i_source_vertex] < adj[currentSourceNode][i]){
+						source_vertex.insert(source_vertex.begin() + i_source_vertex, adj[currentSourceNode][i]);
+						need_insertion = true;
+						break;
+					}
+				}
+
+				if (!need_insertion){
+					source_vertex.push_back(adj[currentSourceNode][i]);
+				}
 			}
 
 			adj[currentSourceNode].pop_back();
 		}
 	}
+}
 
+int main() {
+	init();
+	topo_sort();
 	print_result();
 
 	int wait_key;
