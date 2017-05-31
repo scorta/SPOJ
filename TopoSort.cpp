@@ -21,18 +21,23 @@ bool is_fail(){
 
 void print_result(){
 	if (is_fail()){
-		std::cout << "Sandro fails.";
+		//std::cout << "Sandro fails.";
+		printf("Sandro fails.");
 	}
 	else{
 		for (int i = 0; i < topo_order.size() - 1; i++){
-			std::cout << ++topo_order[i]<< " ";
+			printf("%d ", ++topo_order[i]);
+			//std::cout << ++topo_order[i]<< " ";
 		}
-		std::cout << ++topo_order[topo_order.size() - 1];
+		printf("%d", ++topo_order[topo_order.size() - 1]);
+		//std::cout << ++topo_order[topo_order.size() - 1];
 	}
 }
 
 void init(){
-	std::cin >> n >> m;
+	//std::cin >> n >> m;
+	scanf("%d", &n);
+	scanf("%d", &m);
 
 	for (int i = 0; i < n; i++){
 		std::vector<int> sub;
@@ -57,6 +62,29 @@ void init(){
 	}
 }
 
+int search(int node){
+	int high = source_vertex.size() - 1, low = 0;
+	while (high >= low)
+	{
+		int mid = (high - low) / 2 + low;
+		if (mid == 0) {
+			if (node > source_vertex[mid]){
+				return mid;
+			}
+			else{
+				return -1;
+			}
+		}
+		if (node >= source_vertex[mid] && node < source_vertex[mid - 1]){
+			return mid;
+		}
+		else
+			if (node > source_vertex[mid]) high = mid - 1;
+			else low = mid + 1;
+	}
+	return -1;
+}
+
 void topo_sort(){
 	while (source_vertex.size() > 0){
 		int currentSourceNode = source_vertex[source_vertex.size() - 1];
@@ -66,18 +94,24 @@ void topo_sort(){
 		for (int i = adj[currentSourceNode].size() - 1; i >= 0; i--){
 			if (--degree[adj[currentSourceNode][i]] == 0){
 
-				bool need_insertion = false;
-				for (int i_source_vertex = 0; i_source_vertex < source_vertex.size(); i_source_vertex++){ //Binary search is better?
-					if (source_vertex[i_source_vertex] < adj[currentSourceNode][i]){
-						source_vertex.insert(source_vertex.begin() + i_source_vertex, adj[currentSourceNode][i]);
-						need_insertion = true;
-						break;
-					}
+				int i_source_vertex = search(adj[currentSourceNode][i]);
+				if (i_source_vertex >= 0){
+					source_vertex.insert(source_vertex.begin() + i_source_vertex, adj[currentSourceNode][i]);
 				}
-
-				if (!need_insertion){
+				else {
 					source_vertex.push_back(adj[currentSourceNode][i]);
 				}
+				//for (int i_source_vertex = 0; i_source_vertex < source_vertex.size(); i_source_vertex++){ //Binary search is better?
+				//	if (source_vertex[i_source_vertex] < adj[currentSourceNode][i]){
+				//		source_vertex.insert(source_vertex.begin() + i_source_vertex, adj[currentSourceNode][i]);
+				//		need_insertion = true;
+				//		break;
+				//	}
+				//}
+
+				/*if (!need_insertion){
+					source_vertex.push_back(adj[currentSourceNode][i]);
+				}*/
 			}
 
 			adj[currentSourceNode].pop_back();
@@ -89,8 +123,4 @@ int main() {
 	init();
 	topo_sort();
 	print_result();
-
-	int wait_key;
-	std::cin >> wait_key;
-	return 0;
 }
