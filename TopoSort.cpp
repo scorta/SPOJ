@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 std::vector<std::vector<int>> adj;
 std::vector<int> topo_order;
@@ -21,32 +22,23 @@ bool is_fail(){
 
 void print_result(){
 	if (is_fail()){
-		//std::cout << "Sandro fails.";
 		printf("Sandro fails.");
 	}
 	else{
 		for (int i = 0; i < topo_order.size() - 1; i++){
 			printf("%d ", ++topo_order[i]);
-			//std::cout << ++topo_order[i]<< " ";
 		}
 		printf("%d", ++topo_order[topo_order.size() - 1]);
-		//std::cout << ++topo_order[topo_order.size() - 1];
 	}
 }
 
 void init(){
-	//std::cin >> n >> m;
 	scanf("%d", &n);
 	scanf("%d", &m);
 
-	for (int i = 0; i < n; i++){
-		std::vector<int> sub;
-		//sub.push_back(0);
-		adj.push_back(sub);
-
-		degree.push_back(0);
-
-	}
+	degree = std::vector<int>(n, 0);
+	std::vector<std::vector<int>> temp_adj(n);
+	adj = temp_adj;
 
 	for (int index = m - 1; index >= 0; index--){
 		int vertex1, vertex2;
@@ -62,56 +54,21 @@ void init(){
 	}
 }
 
-int search(int node){
-	int high = source_vertex.size() - 1, low = 0;
-	while (high >= low)
-	{
-		int mid = (high - low) / 2 + low;
-		if (mid == 0) {
-			if (node > source_vertex[mid]){
-				return mid;
-			}
-			else{
-				return -1;
-			}
-		}
-		if (node >= source_vertex[mid] && node < source_vertex[mid - 1]){
-			return mid;
-		}
-		else
-			if (node > source_vertex[mid]) high = mid - 1;
-			else low = mid + 1;
-	}
-	return -1;
+bool descending_comp(const int &a, const int &b){
+	return a > b;
 }
 
 void topo_sort(){
 	while (source_vertex.size() > 0){
-		int currentSourceNode = source_vertex[source_vertex.size() - 1];
+		int currentSourceNode = source_vertex.back();
 		topo_order.push_back(currentSourceNode);
 		source_vertex.pop_back();
 
 		for (int i = adj[currentSourceNode].size() - 1; i >= 0; i--){
 			if (--degree[adj[currentSourceNode][i]] == 0){
 
-				int i_source_vertex = search(adj[currentSourceNode][i]);
-				if (i_source_vertex >= 0){
-					source_vertex.insert(source_vertex.begin() + i_source_vertex, adj[currentSourceNode][i]);
-				}
-				else {
-					source_vertex.push_back(adj[currentSourceNode][i]);
-				}
-				//for (int i_source_vertex = 0; i_source_vertex < source_vertex.size(); i_source_vertex++){ //Binary search is better?
-				//	if (source_vertex[i_source_vertex] < adj[currentSourceNode][i]){
-				//		source_vertex.insert(source_vertex.begin() + i_source_vertex, adj[currentSourceNode][i]);
-				//		need_insertion = true;
-				//		break;
-				//	}
-				//}
-
-				/*if (!need_insertion){
-					source_vertex.push_back(adj[currentSourceNode][i]);
-				}*/
+				std::vector<int>::iterator lower_bound = std::lower_bound(source_vertex.begin(), source_vertex.end(), adj[currentSourceNode][i], descending_comp);
+				source_vertex.insert(lower_bound, adj[currentSourceNode][i]);
 			}
 
 			adj[currentSourceNode].pop_back();
@@ -123,4 +80,5 @@ int main() {
 	init();
 	topo_sort();
 	print_result();
+	return 0;
 }
