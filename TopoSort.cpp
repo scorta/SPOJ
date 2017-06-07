@@ -8,6 +8,13 @@ std::vector<int> source_vertex;
 std::vector<int> degree;
 int n, m;
 
+int main() {
+	init();
+	topo_sort();
+	print_result();
+	return 0;
+}
+
 void add_edge(int u, int v) {
 	adj[u].push_back(v);	
 }
@@ -16,7 +23,6 @@ bool is_fail(){
 	if (topo_order.size() < n){
 		return true;
 	}
-
 	return false;
 }
 
@@ -42,7 +48,8 @@ void init(){
 
 	for (int index = m - 1; index >= 0; index--){
 		int vertex1, vertex2;
-		std::cin >> vertex1 >> vertex2;
+		scanf("%d", &vertex1);
+		scanf("%d", &vertex2);
 		add_edge(vertex1 - 1, vertex2 - 1);
 		degree.at(vertex2 - 1)++;
 	}
@@ -66,7 +73,6 @@ void topo_sort(){
 
 		for (int i = adj[currentSourceNode].size() - 1; i >= 0; i--){
 			if (--degree[adj[currentSourceNode][i]] == 0){
-
 				std::vector<int>::iterator lower_bound = std::lower_bound(source_vertex.begin(), source_vertex.end(), adj[currentSourceNode][i], descending_comp);
 				source_vertex.insert(lower_bound, adj[currentSourceNode][i]);
 			}
@@ -74,11 +80,4 @@ void topo_sort(){
 			adj[currentSourceNode].pop_back();
 		}
 	}
-}
-
-int main() {
-	init();
-	topo_sort();
-	print_result();
-	return 0;
 }
