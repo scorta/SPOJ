@@ -8,13 +8,6 @@ std::vector<int> source_vertex;
 std::vector<int> degree;
 int n, m;
 
-int main() {
-	init();
-	topo_sort();
-	print_result();
-	return 0;
-}
-
 void add_edge(int u, int v) {
 	adj[u].push_back(v);	
 }
@@ -80,4 +73,11 @@ void topo_sort(){
 			adj[currentSourceNode].pop_back();
 		}
 	}
+}
+
+int main() {
+	init();
+	topo_sort();
+	print_result();
+	return 0;
 }
