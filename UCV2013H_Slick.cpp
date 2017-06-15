@@ -15,24 +15,17 @@ const int dx[] = { 1, -1, 0, 0 };
 const int dy[] = { 0, 0, 1, -1 };
 
 int grid[NMAX][NMAX];
-//map<int, int> answer;
 map<int, int> answer;
-
-void print_matrix(){
-	printf("\n");
-	printf("\n");
-	for (int iN = 0; iN < n; iN++){
-		for (int iM = 0; iM < m; iM++){
-			printf("%*d", 2, grid[iN][iM]);
-		}
-		printf("\n");
-	}
-}
+int number_of_slick;
 
 void print_result(){
-	for (map<int, int>::iterator it = answer.begin(); it != answer.end(); it++){
+	printf("%d\n", number_of_slick);
+	map<int, int>::iterator last_it = --answer.end();
+	for (map<int, int>::iterator it = answer.begin(); it != last_it; it++){
 		printf("%d %d\n", *it);
 	}
+
+	printf("%d %d", *last_it);
 }
 
 void Unmark(pt p) {
@@ -71,6 +64,7 @@ void Bfs(pt start) {
 		}
 	}
 	answer[++size]++;
+	number_of_slick++;
 	//printf("size %d", size);
 }
 
@@ -89,6 +83,7 @@ void Solve(int n, int m) {
 
 int main() {	
 	while (true) {
+		number_of_slick = 0;
 		scanf("%d%d", &n, &m);
 
 		if (n == 0 || m == 0) break;
@@ -100,7 +95,6 @@ int main() {
 		}
 
 		Solve(n, m);
-		printf("\n\n");
 		print_result();
 	}
 
