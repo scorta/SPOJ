@@ -1,11 +1,7 @@
 //Solution for The Cats and the Mouse problem on SPOJ: http://www.spoj.com/problems/CATM/
 #include <iostream>
-#include <vector>
-#include <queue>
-#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
 
 using namespace std;
 
