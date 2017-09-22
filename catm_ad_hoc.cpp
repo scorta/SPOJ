@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 using namespace std;
 
@@ -24,14 +25,14 @@ bool IsEscapedCell(Cell target) {
 }
 
 void Init() {
-	scanf("%d%d%d", &n, &m, &k);
+	scanf("%d %d %d", &n, &m, &k);
 }
 
 void Work() {
 	Cell target1, target2;
 	bool found;
 	for (int i = 0; i < k; ++i) {
-		scanf("%d%d%d%d%d%d", &mouse.row, &mouse.column, &cat1.row, &cat1.column, &cat2.row, &cat2.column);
+		scanf("%d %d %d %d %d %d", &mouse.row, &mouse.column, &cat1.row, &cat1.column, &cat2.row, &cat2.column);
 		found = false;
 
 		for (int row = 1; row <= n; ++row) {
