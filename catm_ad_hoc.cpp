@@ -66,4 +66,5 @@ void Work() {
 int main() {
 	Init();
 	Work();
+	return 0;
 }
