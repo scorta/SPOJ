@@ -1,3 +1,4 @@
+//Solution for http://www.spoj.com/problems/PPATH/
 #include <iostream>
 #include <cstdio>
 #include <algorithm>
