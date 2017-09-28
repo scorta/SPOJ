@@ -85,9 +85,7 @@ bool Check_entry()
 void Init()
 {
 	scanf("%d%d", &m, &n);
-
-	vector<vector<int>> temp_maze(m + 2);
-	maze = temp_maze;
+	maze = vector<vector<int>>(m + 2);
 
 	for (int row = 0; row < m + 2; ++row)
 	{
@@ -117,8 +115,6 @@ void Init()
 			maze[row][column] = node;
 		}
 	}
-
-	//Print_maze();
 }
 
 bool Bfs(Node start, Node end)
@@ -183,12 +179,5 @@ int main()
 	{
 		Work();
 	}
-
-	// Init();
-	// Print_maze();
-	// vector<vector<int>> temp_maze(m + 2);
-	// maze = temp_maze;
-	// Print_maze();
-
 	return 0;
 }
