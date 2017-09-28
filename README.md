@@ -1,3 +1,4 @@
 # SPOJ
 Solutions for problems on SPOJ
-My profile on SPOJ: http://www.spoj.com/users/scorta/
+
+[Click here to view my profile on SPOJ](http://www.spoj.com/users/scorta/)
