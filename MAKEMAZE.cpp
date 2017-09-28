@@ -1,4 +1,4 @@
-//http://www.spoj.com/problems/MAKEMAZE/
+//Solution for http://www.spoj.com/problems/MAKEMAZE/
 #include <iostream>
 #include <algorithm>
 #include <queue>
