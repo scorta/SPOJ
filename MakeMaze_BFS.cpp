@@ -1,4 +1,5 @@
 //Solution for http://www.spoj.com/problems/MAKEMAZE/
+//Got "runtime error (SIGSEGV)" on SPOJ
 #include <iostream>
 #include <algorithm>
 #include <queue>
