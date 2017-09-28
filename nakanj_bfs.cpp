@@ -9,8 +9,8 @@ using namespace std;
 
 const int MAX = 12; //
 const int SIZE = 8;
-const int dx[] = { -1, -2, -2, -1, 1, 2, 2, 1};
-const int dy[] = { -2, -1, 1, 2, 2, 1, -1, -2};
+const int dx[] = { -1, -2, -2, -1, 1, 2, 2, 1 };
+const int dy[] = { -2, -1, 1, 2, 2, 1, -1, -2 };
 
 struct Square {
 	int row, column;
@@ -20,7 +20,7 @@ int t;
 vector<vector<int>> board;
 vector <vector<Square>> edge_to;
 Square start, destination;
-Square root = { -1, -1};
+Square root = { -1, -1 };
 
 
 void PrintStat() {
@@ -102,9 +102,16 @@ void Bfs(Square s, Square e) {
 				PrintStat();
 				// printf("%d %d | %d %d\n", destination.row, destination.column, next_row, next_column);
 
-				Square new_square = {next_row, next_column};
+				Square new_square = { next_row, next_column };
 				// printf("LIVE5\n");
 				q.push(new_square);
+				queue<Square> temp_q = q;
+				printf("\nCurrent Q\n");
+				while (!temp_q.empty()){
+					Square node = temp_q.front();
+					temp_q.pop();
+					printf("QUEUE %d %d\n", node.row, node.column);
+				}
 				// printf("LIVE6\n");
 				edge_to[next_row][next_column] = current;
 				// printf("LIVE7\n");
