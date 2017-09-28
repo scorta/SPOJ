@@ -82,12 +82,12 @@ void Bfs(Square s, Square e) {
 	int next_row, next_column;
 	queue<Square> q;
 	q.push(s);
+	Mark(s);
 	while (!q.empty()) {
 		Square current = q.front();
 		// printf("LIVE1\n");
 		q.pop();
 		// printf("LIVE2\n");
-		Mark(current);
 		// printf("LIVE3\n");
 		for (int dir = 0; dir < 8; ++dir) {
 			next_row = current.row + dx[dir];
@@ -99,25 +99,32 @@ void Bfs(Square s, Square e) {
 			// printf("FUCKKKKKK\n");
 
 			if (board[next_row][next_column] == 0) {
-				PrintStat();
-				// printf("%d %d | %d %d\n", destination.row, destination.column, next_row, next_column);
+				// PrintStat();
+				printf("%d %d | %d %d | %d %d\n", e.row, e.column, current.row, current.column, next_row, next_column);
+				// if (e.row == next_row && e.column == next_column) printf("HHAHA\n");
 
 				Square new_square = { next_row, next_column };
-				// printf("LIVE5\n");
+				printf("LIVE5\n");
 				q.push(new_square);
+				Mark(new_square);
+
 				queue<Square> temp_q = q;
+				PrintStat();
 				printf("\nCurrent Q\n");
 				while (!temp_q.empty()){
 					Square node = temp_q.front();
 					temp_q.pop();
 					printf("QUEUE %d %d\n", node.row, node.column);
 				}
-				// printf("LIVE6\n");
+				printf("LIVE6\n");
 				edge_to[next_row][next_column] = current;
-				// printf("LIVE7\n");
+				printf("LIVE7\n");
 
-				if (e.row == next_row && e.column == next_column)
+				if (e.row == next_row && e.column == next_column){
+					printf("HAHAHz\n");
 					return;
+				}
+				printf("LIVE8\n");
 			}
 		}
 	}
@@ -125,9 +132,11 @@ void Bfs(Square s, Square e) {
 }
 
 int TrackBack() {
+	printf("TRACK\n");
 	Square sq = destination;
 	int distant = 0;
 	do {
+		printf("%d %d %d\n", sq.row, sq.column, distant);
 		sq = edge_to[sq.row][sq.column];
 		distant++;
 	} while (sq.row != root.row && sq.column != root.column);
