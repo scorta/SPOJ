@@ -1,5 +1,4 @@
 // Solution for http://www.spoj.com/problems/MAKEMAZE/
-// Uses array to store the Maze instead of vector
 #include <iostream>
 #include <algorithm>
 #include <queue>
@@ -124,9 +123,9 @@ bool Bfs(Node start, Node end) {
   return false;
 }
 
-void Work() {
+void Work(int i) {
   Init();
-
+  //printf("Cases: %d\n", i);
   if (Check_entry()) {
     if (Bfs(start_v, end_v)) {
       printf("valid");
@@ -136,15 +135,16 @@ void Work() {
   } else {
     printf("invalid");
   }
-
   printf("\n");
+
+  //printf("Done %d\n", i);
 }
 
 int main() {
   int t;
   scanf("%d", &t);
   for (int i = 0; i < t; ++i) {
-    Work();
+    Work(i);
   }
   return 0;
 }
