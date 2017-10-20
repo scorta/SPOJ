@@ -15,21 +15,22 @@ const int dy[] = { -2, -1, 1, 2, 2, 1, -1, -2 };
 
 struct Square {
 	int row, column;
+	bool operator == (const Square &b) const {if (this->row == b.row && this->column == b.column) return true; return false;}
 };
 
 int t;
 vector<vector<int>> board;
 vector <vector<Square>> edge_to;
 Square start, destination;
-Square root = { -1, -1 };
+constexpr Square root = { -1, -1 };
 
-void StringToSquare(char s[], Square &square) {
+void StringToSquare(char *const s, Square &square) {
 	square.column = (s[0] - 'a') + N_BORDERS;
 	square.row = abs((s[1] - '1') - 7) + N_BORDERS;
 }
 
-void Mark(Square square) {
-	board[square.row][square.column] = 1; //0 means unvisited
+void Mark(const Square &square, const int &mark) {
+	board[square.row][square.column] = mark; //0 means unvisited
 }
 
 void InitBoard() {
@@ -66,42 +67,39 @@ void Init() {
 }
 
 void Bfs(Square s, Square e) {
-	if (s.row == e.row && s.column == e.column) return;
+	if (s == e) return;
 
 	int next_row, next_column;
+	int distant = 1;
 	queue<Square> q;
 	q.push(s);
-	Mark(s);
+	q.push(root);
+	Mark(s, distant);
 	while (!q.empty()) {
 		Square current = q.front();
 		q.pop();
-		for (int dir = 0; dir < 8; ++dir) {
-			next_row = current.row + dx[dir];
-			next_column = current.column + dy[dir];
+		if (current == root) {
+			if (current == q.front()) 				return;
+			distant++;
+			q.push(root);
+		} else {
+			for (int dir = 0; dir < 8; ++dir) {
+				next_row = current.row + dx[dir];
+				next_column = current.column + dy[dir];
 
-			if (board[next_row][next_column] == 0) {
-				Square new_square = { next_row, next_column };
-				q.push(new_square);
-				Mark(new_square);
-				edge_to[next_row][next_column] = current;
-				if (e.row == next_row && e.column == next_column){
-					return;
+				if (board[next_row][next_column] == 0) {
+					Square new_square = { next_row, next_column };
+					q.push(new_square);
+					Mark(new_square, distant);
+					edge_to[next_row][next_column] = current;
+					if (e == new_square) {
+						return;
+					}
 				}
 			}
 		}
 	}
 	return;
-}
-
-int TrackBack() {
-	Square sq = destination;
-	int distant = 0;
-	do {
-		sq = edge_to[sq.row][sq.column];
-		distant++;
-	} while (sq.row != root.row && sq.column != root.column);
-
-	return distant - 1;
 }
 
 int main() {
@@ -110,7 +108,7 @@ int main() {
 	for (int i = 0; i < t; ++i) {
 		Init();
 		Bfs(start, destination);
-		printf("%d\n", TrackBack());
+		printf("%d\n", board[destination.row][destination.column]);
 	}
 
 	return 0;
