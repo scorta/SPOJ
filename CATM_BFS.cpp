@@ -2,108 +2,159 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <cstdio>
-#include <cstdlib>
 
 using namespace std;
+using Board = vector<vector<int>>;
 
-const int dx[] = {1, -1, 0, 0};
-const int dy[] = {0, 0, -1, 1};
+constexpr int dx[] = {1, -1, 0, 0};
+constexpr int dy[] = {0, 0, -1, 1};
+constexpr int N_BORDERS = 1;
 
 struct Cell {
-    int row, column;
+	int row, column;
+	bool operator==(const Cell &b) const {if (this->row == b.row && this->column == b.column) return true; return false;}
 };
+
+constexpr Cell root = { -1, -1};
 
 int n, m, k;
 Cell mouse, cat1, cat2;
+Board cats_board, mouse_board;
 
-vector<vector<int>> field;
-
-void Mark(Cell cell) { field[cell.row][cell.column] = 0; }
-
-int Distant(const Cell &cell1, const Cell &cell2){
-    return abs(cell1.row - cell2.row) + abs(cell1.column - cell2.column);
+void PrintBoard(Board &board) {
+	for (int row = 0; row < n + 2 * N_BORDERS; ++row) {
+		for (int column = 0; column < m + 2 * N_BORDERS; ++column)
+			printf("%d ", board[row][column]);
+		printf("\n");
+	}
+	printf("---END---\n");
 }
 
-bool ShouldMoveTo(const Cell &cell){
-    if(Distant(mouse, cell) < Distant(cat1, cell) && Distant(mouse, cell) < Distant(cat2, cell))
-        return true;
-    return false;
+void Mark(Board &board, const Cell &cell, const int &mark) { board[cell.row][cell.column] = mark; }
+
+void InitBoardHelper(Board &board) {
+	board = Board(n + 2 * N_BORDERS);
+	for (int row = 0; row < n + 2 * N_BORDERS; ++row) {
+		for (int column = 0; column < m + 2 * N_BORDERS; ++column)
+			board[row].push_back(1);
+	}
+}
+
+void ResetVisited(Board &board) {
+	for (int row = 1; row < n + N_BORDERS; ++row) {
+		for (int column = 1; column < m + N_BORDERS; ++column)
+			board[row][column] = 0;
+	}
 }
 
 void InitBoard() {
-    scanf("%d%d%d", &n, &m, &k);
+	scanf("%d%d%d", &n, &m, &k);
 
-    field = vector<vector<int>>(n + 2);
-    for (int row = 0; row < n + 2; ++row) {
-        for (int column = 0; column < m + 2; ++column)
-            field[row].push_back(0);
-    }
-}
-
-void ResetVisited() {
-    for (int row = 1; row < n + 1; ++row) {
-        for (int column = 1; column < m + 1; ++column)
-            field[row][column] = 1;
-    }
+	InitBoardHelper(cats_board);
+	InitBoardHelper(mouse_board);
 }
 
 void Init() {
-    scanf("%d %d %d %d %d %d", &mouse.row, &mouse.column, &cat1.row, &cat1.column,
-          &cat2.row, &cat2.column);
+	scanf("%d %d %d %d %d %d", &mouse.row, &mouse.column, &cat1.row, &cat1.column,
+	      &cat2.row, &cat2.column);
 
-    Mark(mouse);
-    Mark(cat1);
-    Mark(cat2);
+	ResetVisited(cats_board);
+	ResetVisited(mouse_board);
 }
 
 bool IsMouseEscaped(Cell cell) {
-    if (cell.row == 1 || cell.row == n || cell.column == 1 || cell.column == m)
-        return true;
-    return false;
+	if (cell.row == 1 || cell.row == n || cell.column == 1 || cell.column == m)
+		return true;
+	return false;
 }
 
-bool Bfs() {
-    if (IsMouseEscaped(mouse)){
-        return true;
-    }
-    int step = 0;
-    queue<Cell> q;
-    q.push(mouse);
-    Mark(mouse);
-    while (!q.empty()) {
-        Cell current_cell = q.front();
-        q.pop();
+void BfsCat(const Cell &cat1_, const Cell &cat2_, Board &board) {
+	queue<Cell> q;
+	int distant = 1;
+	int next_row, next_column;
 
-        for (int dir = 0; dir < 4; ++dir) {
-            int next_row = current_cell.row + dx[dir];
-            int next_column = current_cell.column + dy[dir];
+	q.push(cat1_);
+	q.push(cat2_);
+	q.push(root);
 
-            if (field[next_row][next_column]) {
-                Cell new_cell = {next_row, next_column};
-                if(ShouldMoveTo(new_cell)) {
-                    if (IsMouseEscaped(new_cell)) {
-                        return true;
-                    }
-                    Mark(new_cell);
-                    q.push(new_cell);
-                }
-            }
-        }
-    }
-    return false;
+	Mark(board, cat1_, distant);
+	Mark(board, cat2_, distant);
+
+	while (!q.empty()) {
+		Cell current = q.front();
+		q.pop();
+		if (current == root) {
+			if (current == q.front()) {
+				return;
+			}
+			distant++;
+			q.push(root);
+		} else {
+			for (int dir = 0; dir < 4; ++dir) {
+				next_row = current.row + dx[dir];
+				next_column = current.column + dy[dir];
+				if (board[next_row][next_column] == 0) {
+					Cell new_cell = {next_row, next_column};
+					q.push(new_cell);
+					Mark(board, new_cell, distant);
+				}
+			}
+		}
+	}
+}
+
+bool BfsMouse(const Cell &mouse_, Board &board) {
+	if (IsMouseEscaped(mouse)) return true;
+	queue<Cell> q;
+	int distant = 1;
+	int next_row, next_column;
+
+	q.push(mouse_);
+	q.push(root);
+
+	Mark(mouse_board, mouse_, distant);
+
+	while (!q.empty()) {
+		Cell current = q.front();
+		q.pop();
+		if (current == root) {
+			if (current == q.front()) {
+				return false;
+			}
+			distant++;
+			q.push(root);
+		} else {
+			for (int dir = 0; dir < 4; ++dir) {
+				next_row = current.row + dx[dir];
+				next_column = current.column + dy[dir];
+				if (board[next_row][next_column] == 0 && distant < cats_board[next_row][next_column]) {
+					Cell new_cell = {next_row, next_column};
+					if (IsMouseEscaped(new_cell)) {
+						return true;
+					}
+					q.push(new_cell);
+					Mark(board, new_cell, distant);
+				}
+			}
+		}
+	}
+}
+
+void Work() {
+	Init();
+	BfsCat(cat1, cat2, cats_board);
+	if (BfsMouse(mouse, mouse_board)) {
+		printf("YES\n");
+	} else {
+		printf("NO\n");
+	}
 }
 
 int main() {
-    InitBoard();
-    for (int i = 0; i < k; ++i) {
-        ResetVisited();
-        Init();
-        if (Bfs())
-            printf("YES\n");
-        else
-            printf("NO\n");
-        ResetVisited();
-    }
-    return 0;
+	InitBoard();
+	for (int i = 0; i < k; ++i) {
+		Work();
+	}
+
+	return 0;
 }
