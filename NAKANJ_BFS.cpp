@@ -7,11 +7,11 @@
 
 using namespace std;
 
-const int SIZE = 8; // Size of the chess board
-const int N_BORDERS = 2; //Number of borders - help to prevent knight moving out of the board
-const int MAX = SIZE + 2 * N_BORDERS; //Max size of the board; equal to: SIZE + 2 * N_BORDERS
-const int dx[] = { -1, -2, -2, -1, 1, 2, 2, 1 };
-const int dy[] = { -2, -1, 1, 2, 2, 1, -1, -2 };
+constexpr int SIZE = 8; // Size of the chess board
+constexpr int N_BORDERS = 2; //Number of borders - help to prevent knight moving out of the board
+constexpr int MAX = SIZE + 2 * N_BORDERS; //Max size of the board; equal to: SIZE + 2 * N_BORDERS
+constexpr int dx[] = { -1, -2, -2, -1, 1, 2, 2, 1 };
+constexpr int dy[] = { -2, -1, 1, 2, 2, 1, -1, -2 };
 
 struct Square {
 	int row, column;
