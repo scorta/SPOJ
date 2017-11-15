@@ -1,5 +1,4 @@
 //Solution for http://www.spoj.com/problems/MAKEMAZE/
-//Got "runtime error (SIGSEGV)" on SPOJ
 #include <iostream>
 #include <algorithm>
 #include <queue>
@@ -80,13 +79,18 @@ bool Check_entry()
 				return false;
 	}
 
+	if (count_entry != 2)
+		return false;
+
 	return true;
 }
 
 void Init()
 {
 	scanf("%d%d", &m, &n);
-	maze = vector<vector<int>>(m + 2);
+
+	vector<vector<int>> temp_maze(m + 2);
+	maze = temp_maze;
 
 	for (int row = 0; row < m + 2; ++row)
 	{
@@ -116,6 +120,8 @@ void Init()
 			maze[row][column] = node;
 		}
 	}
+
+	//Print_maze();
 }
 
 bool Bfs(Node start, Node end)
